@@ -1,0 +1,13 @@
+md5: c2346434e69f5e27034dd71210dbf794
+frozen: true
+deps:
+- path: data\chromatograms\example_column\non-interacting_tracer
+  repo:
+    url: https://github.com/ronald-jaepel/DVC-data-test
+    rev_lock: 013b51e4c853fd1632b7e5bb87039b81a115ed86
+outs:
+- md5: a73c927c1c75582c2235b14c61103340.dir
+  size: 21807
+  nfiles: 2
+  hash: md5
+  path: raw_data
