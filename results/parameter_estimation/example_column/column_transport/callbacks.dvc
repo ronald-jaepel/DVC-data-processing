@@ -1,0 +1,6 @@
+outs:
+- md5: b80ac927224ee6baf8b7532b82bdb8bc.dir
+  size: 80244
+  nfiles: 1
+  hash: md5
+  path: callbacks
