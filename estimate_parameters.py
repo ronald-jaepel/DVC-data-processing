@@ -28,6 +28,7 @@ with dvc.api.open(
     plt.savefig(os.path.join(results_dir, "input.png"))
     dvc_repo.add(results_dir)
     git_repo.git.add(".")
-    git_repo.git.commit()
+    commit_return = git_repo.git.commit("-m", "Add results file")
+    print(commit_return)
 
 # %%
