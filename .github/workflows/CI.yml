@@ -16,5 +16,5 @@ jobs:
       - name: Use the token
         env:
           GH_TOKEN: ${{ steps.generate-token.outputs.token }}
-        run: |
-          gh api octocat
+        run: git config --global url."https://x-access-token:${GH_TOKEN}@github.com/".insteadOf "https://github.com/" && git clone https://github.com/ronald-jaepel/DVC-data-test && ls
+
