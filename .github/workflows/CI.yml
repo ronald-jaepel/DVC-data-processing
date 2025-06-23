@@ -1,51 +1,20 @@
 name: CI
 
 on:
-  push:
-    branches:
-      - main
-      - dev
-      - test_ci
-    tags:
-      - 'v*.*.*' # Trigger build stage only on version tags
-  pull_request:
-    branches:
-      - '**' # Trigger test stage on pull requests to any branch
+  workflow_dispatch:
 jobs:
-  build:
+  demo_app_authentication:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout current repo
-        uses: actions/checkout@v4
+      - name: Generate a token
+        id: generate-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.GH_APP_ID }}
+          private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
 
-      - name: Generate JWT
-        id: jwt
-        run: |
-          echo "${{ secrets.GH_APP_PRIVATE_KEY }}" > private-key.pem
-          jwt=$(ruby -r openssl -r base64 -r json -e '
-            payload = {
-              iat: Time.now.to_i,
-              exp: Time.now.to_i + (10 * 60),
-              iss: $ENV["GH_APP_ID"]
-            }
-            key = OpenSSL::PKey::RSA.new(File.read("private-key.pem"))
-            token = JWT.encode(payload, key, "RS256")
-            puts token
-          ')
-          echo "token=$jwt" >> $GITHUB_OUTPUT
+      - name: Use the token
         env:
-          GH_APP_ID: ${{ secrets.GH_APP_ID }}
-
-      - name: Get installation access token
-        id: token
+          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
         run: |
-          token=$(curl -s -X POST \
-            -H "Authorization: Bearer ${{ steps.jwt.outputs.token }}" \
-            -H "Accept: application/vnd.github+json" \
-            https://api.github.com/app/installations/YOUR_INSTALLATION_ID/access_tokens | jq -r .token)
-          echo "token=$token" >> $GITHUB_OUTPUT
-
-      - name: Clone repo A
-        run: |
-          git clone https://x-access-token:${{ steps.token.outputs.token }}@github.com/https://github.com/ronald-jaepel/DVC-data-test
-          ls
+          gh api octocat
