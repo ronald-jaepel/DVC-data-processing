@@ -2,6 +2,16 @@ name: CI
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+      - dev
+      - test_ci
+    tags:
+      - 'v*.*.*' # Trigger build stage only on version tags
+  pull_request:
+    branches:
+      - '**' # Trigger test stage on pull requests to any branch
 jobs:
   demo_app_authentication:
     runs-on: ubuntu-latest
@@ -12,6 +22,11 @@ jobs:
         with:
           app-id: ${{ vars.GH_APP_ID }}
           private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
+      - name: Debug token access
+        env:
+          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
+        run: |
+          curl -H "Authorization: token $GH_TOKEN" https://api.github.com/user/repos
 
       - name: Use the token
         env:
